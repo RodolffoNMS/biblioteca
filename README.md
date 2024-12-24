@@ -27,6 +27,20 @@ Este é um sistema simples de gerenciamento de biblioteca, desenvolvido em Java,
 - 👥 **Classe `Usuario`**: Representa os usuários do sistema.
 - 🏛️ **Classe `Biblioteca`**: Gerencia as instâncias de `Livro` e `Usuario`, além de implementar as funcionalidades principais.
 
+## 🚀 Como Executar
+1 - Certifique-se de ter o Java instalado em sua máquina.
+2 - Clone este repositório:
+```
+git clone https://github.com/seu-usuario/sistema-biblioteca.git
+```
+3 - Compile os arquivos .java:
+```
+javac *.java
+```
+4 - Execute o programa:
+```
+java BibliotecaApp
+```
 ## 🧪 Testes
 - ✅ Cada funcionalidade foi implementada de forma modular, permitindo testes individuais antes da integração no menu principal.
 - 🛠️ Teste os métodos de forma isolada para garantir o funcionamento correto antes de executar o sistema completo.
