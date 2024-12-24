@@ -1,24 +1,21 @@
-/*
- * Feedback visual:
- * 👤 para representar o usuário.
- * 📚 para indicar livros emprestados.
- * 📖 para listar os títulos dos livros.
- * ✅ para ações bem-sucedidas.
- * ❌ para erros.
- * ⚠️ para avisos.
- */
-
 import java.util.ArrayList;
 import java.io.Serializable;
 
 public class Usuario implements Serializable {
-    private static final long serialVersionUID = 122024;
     private static final int LIMITE_EMPRESTIMOS = 3;
+    private static final String ERRO_LIMITE_EMPRESTIMOS = "❌ O usuário já atingiu o limite de empréstimos (%d livros).";
+    private static final String ERRO_LIVRO_NAO_ENCONTRADO = "❌ O livro \"%s\" não está na lista de empréstimos.";
     private String nome;
     private int id;
     private ArrayList<Livro> livrosEmprestados;
 
     public Usuario(String nome, int id) {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("❌ O nome do usuário não pode ser nulo ou vazio.");
+        }
+        if (id <= 0) {
+            throw new IllegalArgumentException("❌ O ID do usuário deve ser um número positivo.");
+        }
         this.nome = nome;
         this.id = id;
         this.livrosEmprestados = new ArrayList<>();
@@ -39,19 +36,25 @@ public class Usuario implements Serializable {
     }
 
     public void adicionarLivro(Livro livro) {
-        if (livrosEmprestados.size() < 3) {
+        if (livro == null) {
+            throw new IllegalArgumentException("❌ O livro não pode ser nulo.");
+        }
+        if (livrosEmprestados.size() < LIMITE_EMPRESTIMOS) {
             livrosEmprestados.add(livro);
             System.out.println("✅ Livro \"" + livro.getTitulo() + "\" adicionado à lista de empréstimos.");
         } else {
-            System.out.println("❌ O usuário já possui 3 livros emprestados. Não é possível emprestar mais.");
+            System.out.printf((ERRO_LIMITE_EMPRESTIMOS) + "%n", LIMITE_EMPRESTIMOS);
         }
     }
 
     public void removerLivro(Livro livro) {
+        if (livro == null) {
+            throw new IllegalArgumentException("❌ O livro não pode ser nulo.");
+        }
         if (livrosEmprestados.remove(livro)) {
             System.out.println("✅ Livro \"" + livro.getTitulo() + "\" removido da lista de empréstimos.");
         } else {
-            System.out.println("❌ O livro \"" + livro.getTitulo() + "\" não está na lista de empréstimos.");
+            System.out.printf((ERRO_LIVRO_NAO_ENCONTRADO) + "%n", livro.getTitulo());
         }
     }
 
@@ -60,7 +63,7 @@ public class Usuario implements Serializable {
     }
 
     public ArrayList<Livro> getLivrosEmprestados() {
-        return livrosEmprestados;
+        return new ArrayList<>(livrosEmprestados); // Retorna uma cópia para evitar modificações externas
     }
 
     public boolean podeEmprestar() {

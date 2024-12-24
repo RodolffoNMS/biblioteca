@@ -1,12 +1,3 @@
-/*
- * Feedback visual:
- * ✅ para ações bem-sucedidas.
- * ❌ para erros.
- * ⚠️ para avisos.
- * 📚 para livros.
- * 👤 para usuários.
- * 🔄 para operações de salvar/carregar dados.
- */
 import java.io.*;
 import java.util.ArrayList;
 
@@ -31,36 +22,40 @@ public class Biblioteca {
     }
 
     public void realizarEmprestimo(String isbn, int idUsuario) {
-        Livro livro = buscarLivro(isbn);
-        Usuario usuario = buscarUsuario(idUsuario);
+        try {
+            Livro livro = buscarLivro(isbn);
+            Usuario usuario = buscarUsuario(idUsuario);
 
-        if (livro != null && usuario != null) {
-            if (livro.isDisponivel() && usuario.podeEmprestar()) {
-                livro.emprestar();
-                usuario.adicionarLivro(livro);
-                System.out.println("✅ Empréstimo realizado com sucesso! 📚 Livro: " + livro.getTitulo() + " 👤 Usuário: " + usuario.getNome());
-            } else {
-                System.out.println("❌ Não foi possível realizar o empréstimo. Verifique a disponibilidade do livro ou o limite de empréstimos do usuário.");
+            if (livro != null && usuario != null) {
+                if (livro.livroDisponivel() && usuario.podeEmprestar()) {
+                    livro.emprestar();
+                    usuario.adicionarLivro(livro);
+                    System.out.println("✅ Empréstimo realizado com sucesso! 📚 Livro: " + livro.getTitulo() + " 👤 Usuário: " + usuario.getNome());
+                } else {
+                    System.out.println(Menssagens.Mensagem.ERRO_LIMITE_EMPRESTIMOS);
+                }
             }
-        } else {
-            System.out.println("❌ Livro ou usuário não encontrado.");
+        } catch (Exception e) {
+            System.out.println("❌ Erro ao realizar empréstimo: " + e.getMessage());
         }
     }
 
     public void realizarDevolucao(String isbn, int idUsuario) {
-        Livro livro = buscarLivro(isbn);
-        Usuario usuario = buscarUsuario(idUsuario);
+        try {
+            Livro livro = buscarLivro(isbn);
+            Usuario usuario = buscarUsuario(idUsuario);
 
-        if (livro != null && usuario != null) {
-            if (usuario.getLivrosEmprestados().contains(livro)) {
-                livro.devolver();
-                usuario.removerLivro(livro);
-                System.out.println("✅ Devolução realizada com sucesso! 📚 Livro: " + livro.getTitulo() + " 👤 Usuário: " + usuario.getNome());
-            } else {
-                System.out.println("⚠️ O usuário não possui este livro emprestado.");
+            if (livro != null && usuario != null) {
+                if (usuario.getLivrosEmprestados().contains(livro)) {
+                    livro.devolver();
+                    usuario.removerLivro(livro);
+                    System.out.println("✅ Devolução realizada com sucesso! 📚 Livro: " + livro.getTitulo() + " 👤 Usuário: " + usuario.getNome());
+                } else {
+                    System.out.println("⚠️ O usuário não possui este livro emprestado.");
+                }
             }
-        } else {
-            System.out.println("❌ Livro ou usuário não encontrado.");
+        } catch (Exception e) {
+            System.out.println("❌ Erro ao realizar devolução: " + e.getMessage());
         }
     }
 
@@ -68,7 +63,7 @@ public class Biblioteca {
         System.out.println("📚 Livros disponíveis:");
         boolean algumDisponivel = false;
         for (Livro livro : livros) {
-            if (livro.isDisponivel()) {
+            if (livro.livroDisponivel()) {
                 livro.exibirDetalhes();
                 algumDisponivel = true;
             }
@@ -114,10 +109,6 @@ public class Biblioteca {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("biblioteca.dat"))) {
             livros = (ArrayList<Livro>) ois.readObject();
             usuarios = (ArrayList<Usuario>) ois.readObject();
-            System.out.println("✅ Dados carregados com sucesso! 🔄");
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("⚠️ Nenhum dado salvo encontrado. Iniciando nova biblioteca.");
-            throw e;
         }
     }
 }
